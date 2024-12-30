@@ -58,10 +58,6 @@ FJM_multi <- function(longdata, time, event, X0 = NULL, w= NULL,
   Bi_bar <- lapply(1:c, function(x){ lapply(1:p[x], function(xx){ sapply(1:n[x], function(i){
     matrix((init[[x]]$B[[xx]])[which(longdata[[x]][[xx]]$subj==i),], 
            ncol=nrow(init[[x]]$G_invhalf))%*%init[[x]]$G_invhalf}) }) })
-  #alpha_hat <- sapply(1:p_all, function(x){ 
-  #  coho <- which(!is.na(variable[[x]]))[1]
-  #  p_idx <- variable[[x]][coho]
-  #  as.matrix(init[[coho]]$Theta$alpha[,p_idx])})
   
   alpha_hat <- lapply(1:p_all, function(x){ 
     coho <- 1:c
@@ -69,16 +65,6 @@ FJM_multi <- function(longdata, time, event, X0 = NULL, w= NULL,
     mapply(function(coho,p_idx){
       as.matrix(init[[coho]]$Theta$alpha[,p_idx])},coho=coho,p_idx=p_idx)
   })
-  
-
-  #yij = lapply(1:p_all, function(x){ #for updating alpha_hat
-  #  coho <- which(!is.na(variable[[x]]))
-  #  p_idx <- variable[[x]][coho]
-  #  longdata0 <- unlist(lapply(1:length(coho), function(i){longdata[[coho[i]]][[p_idx[i]]]$y }) )
-  #  subj <- unlist(lapply(1:length(coho), function(i){longdata[[coho[i]]][[p_idx[i]]]$subj }) )
-  #  argvals <- unlist(lapply(1:length(coho), function(i){longdata[[coho[i]]][[p_idx[i]]]$argvals }) )
-  #  data.frame("subj"=subj, "argvals"=argvals, "y"=longdata0)
-  #})
   
   yij = lapply(1:p_all, function(x){ #for updating alpha_hat
     coho <- 1:c
@@ -340,15 +326,6 @@ FJM_multi <- function(longdata, time, event, X0 = NULL, w= NULL,
     
 
     ##1.estimate alpha
-    #PExi <- lapply(1:p_all, function(x) {
-    #  coho <- which(!is.na(variable[[x]]))
-    #  p_idx <- variable[[x]][coho]
-     # unlist(lapply(1:length(coho), function(xx){
-     #   Exi0 = do.call("rbind",Exi[[coho[xx]]])[,c(1:npc0, npc0+(p_idx[xx]-1)*npc1+1:npc1)]
-     #   unlist(lapply(1:n[coho[xx]], function(i){
-     #     PExi0 = phi0_hat[[coho[xx]]][[p_idx[xx]]][[i]] %*% Exi0[i,1:npc0] 
-     #     PExi1 = phi1_hat[[coho[xx]]][[p_idx[xx]]][[i]] %*% Exi0[i,npc0+1:npc1]
-     #    PExi0 + PExi1 }))  }))  })
     
     PExi <- lapply(1:p_all, function(x) {
       coho <- 1:c
@@ -379,30 +356,8 @@ FJM_multi <- function(longdata, time, event, X0 = NULL, w= NULL,
     alpha_hat <- lapply(1:p_all,function(x){alpha_hat[[x]][-1,]})
     
     
-    #alpha_hat <- as.matrix( do.call("cbind", lapply(1:p_all, function(x){
-    #  data_temp = data.frame("subj"=yij[[x]][,1], "argvals"=yij[[x]][,2],"y"=yij[[x]][,3]-b_hat[x]*PExi[[x]])
-    #  fit.mean <- face::pspline(data=data_temp, argvals.new=tnew, knots=knots)
-    #  fit.mean$theta }) ))
-    
-    
-    # mu_fit1 <- fit_ROSMAP_one$face_fit$fit$y1$Bnew %*% alpha_hat[,1]
-    # 
-    # data_temp = data.frame("subj"=yij[[x]][,1], "argvals"=yij[[x]][,2],"y"=yij[[x]][,3]-b_hat[x]*PExi[[x]])
-    # fitm <- gam(y ~ s(argvals, bs='ps', k=knots+3, m=c(2,2))-1, data=data_temp)
-    # plot <- plot(fitm,n=101,seWithMean=TRUE, pages=1)
-    # mu_fit2 <- plot[[1]]$fit 
-    
-    
-    
     ##2.estimate sigma2
-    #W_ind = lapply(1:c, function(x){ sapply(1:p[x], function(xx){ # yij - uij  
-    #  p_idx <- unname(which(do.call("rbind",variable)[,x]==xx))
-    #  as.matrix(cbind(longdata[[x]][[xx]][,1], 
-    #                  longdata[[x]][[xx]][,3] - init[[x]]$B[[xx]]%*%alpha_hat[,p_idx]))
-    #}, simplify = F)  })
-    
-    
-    
+  
     W_ind = lapply(1:c, function(x){ sapply(1:p[x], function(xx){ # yij - uij  
       p_idx <- unname(which(do.call("rbind",variable)[,x]==xx))
       as.matrix(cbind(longdata[[x]][[xx]][,1], 
