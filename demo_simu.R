@@ -19,7 +19,7 @@ source('./R_code/FJM.R')
 source("./R_code/FJM_multi.R") # multi-cohort FJM 
 
 # Generate data 
-load("./data/initial_data_gen.RData")
+load("./initial_data_gen.RData")
 set.seed(1)
 out <- data_gen(n=c(715,3707,522),phi=initial_data_gen$phi,psi=initial_data_gen$psi,
                 mu=initial_data_gen$mu,beta=initial_data_gen$beta,
